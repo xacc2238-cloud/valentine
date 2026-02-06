@@ -42,9 +42,12 @@ h1 { color:#c2185b; }
 
 .heart {
   position:fixed;
-  font-size:20px;
+  font-size:40px;
+  cursor:pointer;
+  z-index:9999;
   animation:float 3s linear forwards;
 }
+
 
 @keyframes float {
   from { transform:translateY(0); opacity:1; }
@@ -137,19 +140,26 @@ function spawnHeart(){
   const heart=document.createElement("div");
   heart.innerText="💖";
   heart.className="heart";
+
   heart.style.left=Math.random()*window.innerWidth+"px";
-  heart.style.bottom="0px";
+  heart.style.top=Math.random()*window.innerHeight+"px";
+
   heart.onclick=()=>{
     score++;
     scoreText.innerText=score+" / 5";
     heart.remove();
+
     if(score>=5){
       show("questionScreen");
       startCountdown();
-    } else spawnHeart();
+    } else {
+      spawnHeart();
+    }
   };
+
   document.body.appendChild(heart);
 }
+
 
 /* QUESTION */
 const noBtn=document.getElementById("noBtn");
