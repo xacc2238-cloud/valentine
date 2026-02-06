@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Valentine 💖</title>
+
+<style>
+body {
+  margin:0;
+  font-family:"Comic Sans MS", cursive;
+  text-align:center;
+  background:linear-gradient(135deg,#ffd6e0,#fff0f6);
+  overflow:hidden;
+}
+
+.screen {
+  display:none;
+  height:100vh;
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
+  padding:20px;
+}
+
+.active { display:flex; }
+
+button {
+  padding:15px 25px;
+  font-size:1.2rem;
+  margin:10px;
+  border:none;
+  border-radius:12px;
+  cursor:pointer;
+  background:#ff4d6d;
+  color:white;
+}
+
+#noBtn { background:#888; position:relative; }
+
+h1 { color:#c2185b; }
+
+.heart {
+  position:fixed;
+  font-size:20px;
+  animation:float 3s linear forwards;
+}
+
+@keyframes float {
+  from { transform:translateY(0); opacity:1; }
+  to { transform:translateY(-200px); opacity:0; }
+}
+
+#slideshow img {
+  width:200px;
+  height:200px;
+  object-fit:cover;
+  border-radius:20px;
+}
+
+#musicBtn {
+  position:fixed;
+  bottom:10px;
+  right:10px;
+  background:#ff85a2;
+}
+</style>
+</head>
+
+<body>
+
+<!-- SCREEN 1: MINI GAME -->
+<div id="game" class="screen active">
+  <h1>Catch 5 hearts to unlock love 💘</h1>
+  <p id="score">0 / 5</p>
+  <button id="startGame">Start Game</button>
+</div>
+
+<!-- SCREEN 2: QUESTION -->
+<div id="questionScreen" class="screen">
+  <h1 id="question">Will you be my Valentine?</h1>
+  <div>
+    <button id="yesBtn">Yes 💖</button>
+    <button id="noBtn">No 💔</button>
+  </div>
+  <p id="countdown"></p>
+</div>
+
+<!-- SCREEN 3: PROPOSAL -->
+<div id="proposal" class="screen">
+  <h1>💍 Proposal Mode Activated 💍</h1>
+  <h2>Forever starts now ❤️</h2>
+  <button onclick="showMessage()">Open Love Letter 💌</button>
+</div>
+
+<!-- SCREEN 4: LOVE MESSAGE -->
+<div id="message" class="screen">
+  <h1>My Secret Message</h1>
+  <p>You are the best thing that ever happened to me.  
+  Today, tomorrow, forever — I choose you. 💞</p>
+
+  <div id="slideshow">
+    <img id="slide" src="https://picsum.photos/200?1">
+  </div>
+</div>
+
+<button id="musicBtn">🎵 Music</button>
+
+<audio id="music" loop>
+<source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_9d1e6c6e7f.mp3">
+</audio>
+
+<script>
+const screens = document.querySelectorAll(".screen");
+function show(id){
+  screens.forEach(s=>s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+}
+
+/* URL NAME */
+const params = new URLSearchParams(location.search);
+const from = params.get("from");
+if(from){
+  document.getElementById("question").innerText =
+  `Will you be my Valentine from ${from}? 💘`;
+}
+
+/* MINI GAME */
+let score=0;
+const scoreText=document.getElementById("score");
+
+document.getElementById("startGame").onclick=()=>{
+  spawnHeart();
+};
+
+function spawnHeart(){
+  const heart=document.createElement("div");
+  heart.innerText="💖";
+  heart.className="heart";
+  heart.style.left=Math.random()*window.innerWidth+"px";
+  heart.style.bottom="0px";
+  heart.onclick=()=>{
+    score++;
+    scoreText.innerText=score+" / 5";
+    heart.remove();
+    if(score>=5){
+      show("questionScreen");
+      startCountdown();
+    } else spawnHeart();
+  };
+  document.body.appendChild(heart);
+}
+
+/* QUESTION */
+const noBtn=document.getElementById("noBtn");
+noBtn.onmouseover=()=>{
+  noBtn.style.left=Math.random()*window.innerWidth+"px";
+  noBtn.style.top=Math.random()*window.innerHeight+"px";
+};
+
+document.getElementById("yesBtn").onclick=()=>{
+  confetti();
+  show("proposal");
+};
+
+/* COUNTDOWN */
+function startCountdown(){
+  let t=10;
+  const c=document.getElementById("countdown");
+  const timer=setInterval(()=>{
+    c.innerText="Decision timer: "+t;
+    t--;
+    if(t<0){
+      clearInterval(timer);
+      c.innerText="Time's up… but love waits ❤️";
+    }
+  },1000);
+}
+
+/* CONFETTI */
+function confetti(){
+  for(let i=0;i<60;i++){
+    const h=document.createElement("div");
+    h.className="heart";
+    h.innerText="💗";
+    h.style.left=Math.random()*window.innerWidth+"px";
+    h.style.bottom="0px";
+    document.body.appendChild(h);
+    setTimeout(()=>h.remove(),3000);
+  }
+}
+
+/* LOVE MESSAGE */
+function showMessage(){
+  show("message");
+}
+
+/* SLIDESHOW */
+const slide=document.getElementById("slide");
+let i=1;
+setInterval(()=>{
+  i++;
+  slide.src="https://picsum.photos/200?"+i;
+},2000);
+
+/* MUSIC */
+const music=document.getElementById("music");
+document.getElementById("musicBtn").onclick=()=>{
+  if(music.paused){
+    music.play();
+  } else music.pause();
+};
+
+/* FLOATING HEARTS BACKGROUND */
+setInterval(()=>{
+  const h=document.createElement("div");
+  h.className="heart";
+  h.innerText="💘";
+  h.style.left=Math.random()*window.innerWidth+"px";
+  h.style.bottom="0px";
+  document.body.appendChild(h);
+  setTimeout(()=>h.remove(),3000);
+},800);
+</script>
+
+</body>
+</html>
